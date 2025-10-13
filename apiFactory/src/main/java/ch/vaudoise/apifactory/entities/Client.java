@@ -9,7 +9,7 @@ import java.util.List;
 @Table(name = "client")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "cli_type", discriminatorType = DiscriminatorType.STRING)
-public class Client {
+public abstract class Client {
 
     @Id
     @Column(name = "cli_id")
@@ -18,9 +18,9 @@ public class Client {
 
     @Column(name = "cli_name",nullable = false)
     private String name;
-    @Column(name = "cli_email",nullable = false)
+    @Column(name = "cli_email",nullable = false,unique = true)
     private String email;
-    @Column(name = "cli_phone")
+    @Column(name = "cli_phone",unique = true)
     private String phone;
 
     @Enumerated(EnumType.STRING)
@@ -57,10 +57,6 @@ public class Client {
 
     public TypeClient getTypeClient() {
         return typeClient;
-    }
-
-    public void setTypeClient(TypeClient typeClient) {
-        this.typeClient = typeClient;
     }
 
     public List<Contract> getListOfContracts() {

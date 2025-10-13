@@ -1,6 +1,11 @@
 package ch.vaudoise.apifactory.controller;
 
 import ch.vaudoise.apifactory.dto.ClientCreateRequest;
+import ch.vaudoise.apifactory.dto.ClientCompanyResponse;
+import ch.vaudoise.apifactory.dto.ClientModifyRequest;
+import ch.vaudoise.apifactory.dto.ClientResponse;
+import ch.vaudoise.apifactory.entities.Client;
+import ch.vaudoise.apifactory.exceptions.ClientNotFoundException;
 import ch.vaudoise.apifactory.services.ClientServices;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -37,7 +42,41 @@ public class ClientController {
         }catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Invalid input: " + e.getMessage());}
+        catch (Exception e) {
+            log.error("Unexpected error while adding client", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An unexpected error occurred. Please try again later.");
+        }
    }
+
+   @GetMapping("/id/{id}")
+   public ClientResponse getClient(@PathVariable int id){
+            return clientServices.getClientByID(id);
+   }
+
+    @GetMapping
+    public ClientResponse getClientByEmail(@RequestParam("email") String email) throws ClientNotFoundException {
+            return clientServices.getClientByEmail(email);
+
+    }
+
+    @PutMapping("/update/{email}")
+    public ResponseEntity<String>  modifyClient(@PathVariable String email,@RequestBody ClientModifyRequest client) {
+        try {
+            clientServices.updateClient(email, client);
+            return ResponseEntity.ok("Client updated successfully.");
+        } catch (ClientNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        }
+    }
+
+
+
+
+
+
+
 
 
     /**

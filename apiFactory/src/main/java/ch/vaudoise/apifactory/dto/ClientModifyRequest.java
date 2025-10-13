@@ -1,12 +1,9 @@
 package ch.vaudoise.apifactory.dto;
 
 import ch.vaudoise.apifactory.entities.TypeClient;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 
-import java.util.Date;
-
-public record ClientCreateRequest(
+public record ClientModifyRequest (
         @NotNull(message = "Client type is required.")
         TypeClient typeClient,              // PERSON | COMPANY
         @NotBlank(message = "Name cannot be empty.")
@@ -27,20 +24,6 @@ public record ClientCreateRequest(
                 regexp = "(\\b(0041|0)|\\B\\+41)(\\s?\\(0\\))?(\\s)?[1-9]{2}(\\s)?[0-9]{3}(\\s)?[0-9]{2}(\\s)?[0-9]{2}\\b",
                 message = "Invalid Swiss phone number format. Must include +41 or 0 prefix."
         )
-        String phone,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-        Date birthdate,                     // For PERSON
-
-        String companyIdentifier            // For COMPANY
-                                  ){
-    @AssertTrue(message = "Birthdate is required for PERSON")
-    public boolean isBirthdateRequiredForPerson() {
-        return typeClient != TypeClient.PERSON || birthdate != null;
-    }
-
-    @AssertTrue(message = "Company Identifier is required for COMPANY")
-    public boolean isCompanyIdRequiredForCompany() {
-        return typeClient != TypeClient.COMPANY || (companyIdentifier != null && !companyIdentifier.isBlank());
-    }
-
+        String phone
+        ){
 }

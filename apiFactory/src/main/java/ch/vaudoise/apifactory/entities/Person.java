@@ -16,6 +16,9 @@ public class Person extends Client{
     @Column(name = "cli_birthdate")
     private Date birthdate;
 
+    @Column(name = "cli_company_identifier",insertable = false,updatable = false )
+    private String companyIdentifier;
+
 
     // Getter and Setter
     public Date getBirthdate() {
