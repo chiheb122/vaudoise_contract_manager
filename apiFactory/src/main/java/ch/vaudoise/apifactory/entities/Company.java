@@ -1,4 +1,4 @@
-package ch.vaudoise.apifactory.entity;
+package ch.vaudoise.apifactory.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;

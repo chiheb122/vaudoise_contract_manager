@@ -1,4 +1,4 @@
-package ch.vaudoise.apifactory.entity;
+package ch.vaudoise.apifactory.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,6 +32,10 @@ public class Contract {
     @JsonIgnore // To respect this constraint Keep the update date (last modified date) internally
     @Column(name = "last_modified_date")
     private Date lastModifiedDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="cli_id")
+    private Client client;
 
 
     // Make startDate with current date if is it null;
@@ -71,5 +75,13 @@ public class Contract {
 
     public void setCostAmount(BigDecimal costAmount) {
         this.costAmount = costAmount;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

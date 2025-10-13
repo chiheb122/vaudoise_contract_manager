@@ -1,4 +1,4 @@
-package ch.vaudoise.apifactory.entity;
+package ch.vaudoise.apifactory.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;

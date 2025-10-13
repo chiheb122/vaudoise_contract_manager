@@ -1,6 +1,9 @@
-package ch.vaudoise.apifactory.entity;
+package ch.vaudoise.apifactory.entities;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "client")
@@ -19,9 +22,13 @@ public class Client {
     private String email;
     @Column(name = "cli_phone")
     private String phone;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "cli_type")
     private TypeClient typeClient;
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<Contract> ListOfContracts = new ArrayList<>();
 
     // Getter and Setter
     public String getName() {
@@ -54,5 +61,13 @@ public class Client {
 
     public void setTypeClient(TypeClient typeClient) {
         this.typeClient = typeClient;
+    }
+
+    public List<Contract> getListOfContracts() {
+        return ListOfContracts;
+    }
+
+    public void setListOfContracts(List<Contract> listOfContracts) {
+        ListOfContracts = listOfContracts;
     }
 }
