@@ -1,9 +1,8 @@
 package ch.vaudoise.apifactory.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+
 
 import java.util.Date;
 
@@ -13,7 +12,8 @@ public class Person extends Client{
 
     // Dates follow ISO 8601 format (yyyy-MM-dd)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @Column(name = "birthdate",nullable = false)
+    @Temporal(TemporalType.DATE)
+    @Column(name = "cli_birthdate")
     private Date birthdate;
 
 

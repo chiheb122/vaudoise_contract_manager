@@ -24,7 +24,7 @@ public class Client {
     private String phone;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "cli_type")
+    @Column(name = "cli_type",insertable=false, updatable=false)
     private TypeClient typeClient;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
