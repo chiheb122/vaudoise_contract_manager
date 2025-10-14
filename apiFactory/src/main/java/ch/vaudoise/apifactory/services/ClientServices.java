@@ -3,6 +3,7 @@ package ch.vaudoise.apifactory.services;
 import ch.vaudoise.apifactory.dto.*;
 import ch.vaudoise.apifactory.entities.Client;
 import ch.vaudoise.apifactory.entities.Company;
+import ch.vaudoise.apifactory.entities.Contract;
 import ch.vaudoise.apifactory.entities.Person;
 import ch.vaudoise.apifactory.exceptions.ClientNotFoundException;
 import ch.vaudoise.apifactory.factory.ClientFactory;
@@ -13,8 +14,7 @@ import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static ch.vaudoise.apifactory.entities.TypeClient.COMPANY;
-import static ch.vaudoise.apifactory.entities.TypeClient.PERSON;
+import java.util.List;
 
 @Service
 public class ClientServices {
@@ -22,6 +22,11 @@ public class ClientServices {
     @PersistenceContext
     EntityManager em;
 
+    /**
+     * Create a new client (Person or Company) based on the provided request data.
+     * @param req
+     * @return
+     */
     @Transactional
     public Client createClient(ClientCreateRequest req){
         Client instance = ClientFactory.instantiate(req);
@@ -30,8 +35,11 @@ public class ClientServices {
     }
 
 
-
-    // Get a client by id
+    /**
+     * Get a client by her ID
+     * @param id
+     * @return
+     */
     public ClientResponse getClientByID(int id) {
         Client clientEntity = em.find(Client.class, (long) id);
 
@@ -43,6 +51,11 @@ public class ClientServices {
     }
 
 
+    /**
+     * Map a Client entity to the appropriate ClientResponse subclass based on its type.
+     * @param clientEntity
+     * @return
+     */
     private ClientResponse mapClient(Client clientEntity){
         switch (clientEntity.getTypeClient()) {
             case PERSON:
@@ -94,7 +107,53 @@ public class ClientServices {
 
     }
 
+    // Delete a client by her email
+    @Transactional
+    public void deleteClientByEmail(String email){
+        try {
+            Client existing = em.createQuery(
+                            "SELECT x FROM Client x WHERE LOWER(x.email) = LOWER(:email)", Client.class)
+                    .setParameter("email", email)
+                    .getSingleResult();
+            em.remove(existing);
+        }catch (NoResultException e) {
+            throw new ClientNotFoundException("Client with email " + email + " not found.");
+        }
+    }
 
+    // add contract to client
+    @Transactional
+    public void addContractToClient(String email, ContractRequest contract){
+        try {
+            Client existing = em.createQuery(
+                            "SELECT x FROM Client x WHERE LOWER(x.email) = LOWER(:email)", Client.class)
+                    .setParameter("email", email)
+                    .getSingleResult();
+            // create the contract
+            Contract newContract = new Contract();
+            newContract.setStartDate(contract.startDate());
+            newContract.setEndDate(contract.endDate());
+            newContract.setCostAmount(contract.costAmount());
+            newContract.setClient(existing);
+            // persist the contract
+            em.persist(newContract);
+        }catch (NoResultException e) {
+            throw new ClientNotFoundException("Client with email " + email + " not found.");
+        }
+    }
+
+    // Get all contracts of a client by her email
+    public List<Contract> getAllContractsOfClientByEmail(String email){
+        try {
+            Client existing = em.createQuery(
+                            "SELECT x FROM Client x WHERE LOWER(x.email) = LOWER(:email)", Client.class)
+                    .setParameter("email", email)
+                    .getSingleResult();
+            return existing.getListOfContracts();
+        }catch (NoResultException e) {
+            throw new ClientNotFoundException("Client with email " + email + " not found.");
+        }
+    }
 
 
 

@@ -1,10 +1,7 @@
 package ch.vaudoise.apifactory.controller;
 
-import ch.vaudoise.apifactory.dto.ClientCreateRequest;
-import ch.vaudoise.apifactory.dto.ClientCompanyResponse;
-import ch.vaudoise.apifactory.dto.ClientModifyRequest;
-import ch.vaudoise.apifactory.dto.ClientResponse;
-import ch.vaudoise.apifactory.entities.Client;
+import ch.vaudoise.apifactory.dto.*;
+import ch.vaudoise.apifactory.entities.Contract;
 import ch.vaudoise.apifactory.exceptions.ClientNotFoundException;
 import ch.vaudoise.apifactory.services.ClientServices;
 import jakarta.validation.Valid;
@@ -16,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -70,6 +68,61 @@ public class ClientController {
                     .body(e.getMessage());
         }
     }
+
+
+    /** Delete a client by email
+     * @param email The email of the client to delete
+     * @return A ResponseEntity with a success message or an error message
+     */
+    @DeleteMapping("/delete/{email}")
+    public ResponseEntity<String> deleteClient(@PathVariable String email) {
+        try {
+            clientServices.deleteClientByEmail(email);
+            return ResponseEntity.ok("Client deleted successfully.");
+        } catch (ClientNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            log.error("Unexpected error while deleting client", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An unexpected error occurred. Please try again later.");
+        }
+    }
+
+
+    /** Method to add a contract to a client
+     *
+     */
+    @PostMapping("/contracts/add")
+    public ResponseEntity<String> addContractToClient(@RequestParam String email, @RequestBody ContractRequest contract){
+        try {
+            clientServices.addContractToClient(email, contract);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body("Contract successfully added to client with email: " + email);
+        } catch (ClientNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Invalid input: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("Unexpected error while adding contract to client", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An unexpected error occurred. Please try again later.");
+        }
+
+    }
+
+
+    /** Method to get all contracts of a client
+     *
+     */
+    @GetMapping("/contracts")
+    public List<Contract> getContractsOfClient(@RequestParam String email){
+            return clientServices.getAllContractsOfClientByEmail(email);
+    }
+
+
 
 
 
