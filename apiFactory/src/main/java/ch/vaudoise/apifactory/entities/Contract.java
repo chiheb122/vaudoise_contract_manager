@@ -87,4 +87,8 @@ public class Contract {
     public void setClient(Client client) {
         this.client = client;
     }
+
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
 }
