@@ -3,6 +3,7 @@ package ch.vaudoise.apifactory.entities;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -27,9 +28,21 @@ public abstract class Client {
     @Column(name = "cli_type",insertable=false, updatable=false)
     private TypeClient typeClient;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "client", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<Contract> ListOfContracts = new ArrayList<>();
 
+
+    /**
+     * * Before removing a client, update all associated contracts to set their end date to the current date
+     * and dissociate them from the client. This ensures that contracts are properly closed.
+     */
+    @PreRemove
+    private void updateContractsBeforeRemoval() {
+        for (Contract contract : ListOfContracts) {
+            contract.setEndDate(new Date());
+            contract.setClient(null);
+        }
+    }
     // Getter and Setter
     public String getName() {
         return name;
@@ -59,8 +72,16 @@ public abstract class Client {
         return typeClient;
     }
 
+    // return only the active contracts (endDate is null or in the future)
     public List<Contract> getListOfContracts() {
-        return ListOfContracts;
+        List<Contract> activeContracts = new ArrayList<>();
+        Date now = new Date();
+        for (Contract contract : ListOfContracts) {
+            if (contract.getEndDate() == null || contract.getEndDate().after(now)) {
+                activeContracts.add(contract);
+            }
+        }
+        return activeContracts;
     }
 
     public void setListOfContracts(List<Contract> listOfContracts) {
