@@ -44,6 +44,9 @@ public abstract class Client {
         }
     }
     // Getter and Setter
+    public Long getId() {
+        return id;
+    }
     public String getName() {
         return name;
     }
