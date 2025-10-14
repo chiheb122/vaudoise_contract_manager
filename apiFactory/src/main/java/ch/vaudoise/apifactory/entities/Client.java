@@ -72,19 +72,12 @@ public abstract class Client {
         return typeClient;
     }
 
-    // return only the active contracts (endDate is null or in the future)
     public List<Contract> getListOfContracts() {
-        List<Contract> activeContracts = new ArrayList<>();
-        Date now = new Date();
-        for (Contract contract : ListOfContracts) {
-            if (contract.getEndDate() == null || contract.getEndDate().after(now)) {
-                activeContracts.add(contract);
-            }
-        }
-        return activeContracts;
+        return this.ListOfContracts;
     }
 
     public void setListOfContracts(List<Contract> listOfContracts) {
         ListOfContracts = listOfContracts;
     }
+
 }
