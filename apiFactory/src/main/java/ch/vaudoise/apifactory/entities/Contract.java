@@ -19,10 +19,12 @@ public class Contract {
 
     // Dates follow ISO 8601 format (yyyy-MM-dd)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Temporal(TemporalType.DATE)
     @Column(name = "start_date")
     private Date startDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    @Column(name = "end_date")
+    @Temporal(TemporalType.DATE)
+    @Column(name = "end_date",nullable = true)
     private Date endDate;
 
     @Column(name = "cost_amount",nullable = false)
@@ -74,6 +76,7 @@ public class Contract {
     }
 
     public void setCostAmount(BigDecimal costAmount) {
+        this.lastModifiedDate = new Date();
         this.costAmount = costAmount;
     }
 
