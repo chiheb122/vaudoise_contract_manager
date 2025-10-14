@@ -4,7 +4,6 @@ import ch.vaudoise.apifactory.dto.*;
 import ch.vaudoise.apifactory.exceptions.ClientNotFoundException;
 import ch.vaudoise.apifactory.services.ClientServices;
 import jakarta.validation.Valid;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -12,9 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -96,53 +93,6 @@ public class ClientController {
     }
 
 
-    /** Method to add a contract to a client
-     *
-     */
-    @PostMapping("/contracts/add")
-    public ResponseEntity<String> addContractToClient(@RequestParam String email, @RequestBody ContractRequest contract){
-        try {
-            clientServices.addContractToClient(email, contract);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body("Contract successfully added to client with email: " + email);
-        } catch (ClientNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Invalid input: " + e.getMessage());
-        } catch (Exception e) {
-            log.error("Unexpected error while adding contract to client", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An unexpected error occurred. Please try again later.");
-        }
-
-    }
-
-
-    /**
-     * Retrieve all contracts of a client by her email.
-     * If updatedAfter is provided, only contracts updated after that date are returned.
-     * @param email The email of the client
-     * @param updatedAfter (Optional) Date to filter contracts updated after this date
-     * @return A list of ContractRequest dto objects representing the client's contracts
-     */
-    @GetMapping("/contracts")
-    public ResponseEntity<List<ContractRequest>> getContractsByEmail(
-            @RequestParam String email,
-            @RequestParam(required = false)
-            @DateTimeFormat(pattern = "yyyy-MM-dd") Date updatedAfter) {
-        try {
-            List<ContractRequest> contracts = clientServices.getAllContractsOfClientByEmail(email, updatedAfter);
-            return ResponseEntity.ok(contracts);
-        }catch (ClientNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } catch (Exception e) {
-            log.error("Unexpected error while retrieving contracts for client with email: " + email, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-
-    }
 
 
 

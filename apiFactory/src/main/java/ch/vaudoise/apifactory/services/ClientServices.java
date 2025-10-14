@@ -34,6 +34,12 @@ public class ClientServices {
     @Transactional
     public Client createClient(ClientCreateRequest req) {
         Client instance = ClientFactory.instantiate(req);
+        // Check if a client with the same email already exists )
+        clientRepository.findByEmailIgnoreCase(req.email())
+                    .ifPresent(c -> {
+                        throw new IllegalArgumentException("A client with email " + req.email() + " already exists.");
+                    });
+        // Save the new client to the repository
         return clientRepository.save(instance);
     }
 
@@ -59,6 +65,7 @@ public class ClientServices {
     private ClientResponse mapClient(Client clientEntity){
         if (clientEntity instanceof Person p) {
             return new ClientPersonResponse(
+                    p.getId(),
                     p.getName(),
                     p.getEmail(),
                     p.getTypeClient().toString(),
@@ -66,6 +73,7 @@ public class ClientServices {
             );
         } else if (clientEntity instanceof Company c) {
             return new ClientCompanyResponse(
+                    c.getId(),
                     c.getName(),
                     c.getEmail(),
                     c.getTypeClient().toString(),
@@ -122,69 +130,9 @@ public class ClientServices {
         clientRepository.delete(client);
     }
 
-    /**
-     * Method to add a contract to a client
-     * @param email The email of the client to whom the contract will be added
-     * @param contract The contract details to add
-     */
-    @Transactional
-    public void addContractToClient(String email, ContractRequest contract){
-        // 1. Find the client by email
-        Client client = clientRepository.findByEmailIgnoreCase(email)
-                .orElseThrow(() -> new ClientNotFoundException(
-                        "Client with email " + email + " not found."
-                ));
-        // 2. Create a new contract from the request
-        Contract newContract = new Contract();
-        newContract.setStartDate(contract.startDate());
-        newContract.setEndDate(contract.endDate());
-        newContract.setCostAmount(contract.costAmount());
-        newContract.setClient(client);
-        // add the contract to the client
-        client.getListOfContracts().add(newContract);
-        // save the client with the new contract
-        clientRepository.save(client);
-    }
 
-    /**
-     * Retrieve all valid contracts of a client identified by her email.
-     * A contract is considered valid if its end date is after the current date.
-     * Optionally, filter contracts that were updated after a specified date.
-     *
-     * @param email The email of the client whose contracts are to be retrieved
-     * @param updatedAfter (Optional) If provided, only contracts updated after this date will be included
-     * @return A list of ContractRequest representing the client's valid contracts
-     */
-    public List<ContractRequest> getAllContractsOfClientByEmail(String email, @Nullable Date updatedAfter) {
-        // 1. Find the client by email
-        Client client = clientRepository.findByEmailIgnoreCase(email)
-                .orElseThrow(() -> new ClientNotFoundException(
-                        "Client with email " + email + " not found."
-                ));
-        // 2. get all contracts and filter by end date > current date
-        List<ContractRequest> validContract = new ArrayList<>();
-        for (Contract contract : client.getListOfContracts()) {
 
-            // Check if the contract is valid (end date > current date)
-            // and if it was updated after the specified date (if provided)
-            boolean isValidContract = contract.getEndDate().after(new Date());
-            boolean isUpdatedAfter = updatedAfter == null || contract.getLastModifiedDate().after(updatedAfter);
 
-            if (isValidContract && isUpdatedAfter) {
-                // Map the contract entity to a ContractRequest DTO
-                ContractRequest cr = new ContractRequest(
-                        contract.getStartDate(),
-                        contract.getEndDate(),
-                        contract.getCostAmount()
-                );
-                // add to the list of valid contracts
-                validContract.add(cr);
-
-            }
-        }
-
-        return validContract;
-    }
 
 
 
