@@ -8,13 +8,11 @@ import ch.vaudoise.apifactory.entities.Person;
 import ch.vaudoise.apifactory.exceptions.ClientNotFoundException;
 import ch.vaudoise.apifactory.factory.ClientFactory;
 import ch.vaudoise.apifactory.repository.ClientRepository;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.function.Function;
+
 
 @Service
 public class ClientServices {
@@ -63,13 +61,21 @@ public class ClientServices {
      * @return ClientResponse
      */
     private ClientResponse mapClient(Client clientEntity){
+        // Helper function to convert Contract to ContractRequest
+        Function<Contract, ContractRequest> toContractResponse = contract -> new ContractRequest(
+                contract.getStartDate(),
+                contract.getEndDate(),
+                contract.getCostAmount()
+        );
+
         if (clientEntity instanceof Person p) {
             return new ClientPersonResponse(
                     p.getId(),
                     p.getName(),
                     p.getEmail(),
                     p.getTypeClient().toString(),
-                    p.getBirthdate()
+                    p.getBirthdate(),
+                    p.getListOfContracts().stream().map(toContractResponse).toList()
             );
         } else if (clientEntity instanceof Company c) {
             return new ClientCompanyResponse(
@@ -77,7 +83,8 @@ public class ClientServices {
                     c.getName(),
                     c.getEmail(),
                     c.getTypeClient().toString(),
-                    c.getCompanyIdentifier()
+                    c.getCompanyIdentifier(),
+                    c.getListOfContracts().stream().map(toContractResponse).toList()
             );
         } else {
             throw new IllegalStateException("Unexpected client type: " + clientEntity.getTypeClient());
