@@ -76,6 +76,7 @@ The project includes unit tests for service classes.
 ![tests](docs/tests.png)
 
 </center>
+
 Tests are located in the `src/test/java` directory and can be run using Maven:
 ```bash
   mvn test
