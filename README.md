@@ -31,7 +31,7 @@ As a customer advisor, I want to create,
     ```
 2. Navigate to the project directory
     ```bash
-    cd vaudoise_contract_manager
+    cd vaudoise_contract_manager/apiFactory
     ```
 3. Build the project using Maven
     ```bash
@@ -41,11 +41,18 @@ As a customer advisor, I want to create,
     ```bash
     mvn spring-boot:run
     ```
-5. The application will be accessible at `http://localhost:8081`
+
+> **⚠️ Note:** Make sure you have MySQL server running on your machine. The application is configured to connect to a MySQL database named `vaudoise` with username `root` and no password.
+
+> You can modify these settings in the `src/main/resources/application.properties` file.
+5. The application will be accessible at `http://localhost:8081/api/v1`
 ---
 
 ### API Endpoints
 **All documentation is available in Postman collection.**
+
+**Documentation**
+https://documenter.getpostman.com/view/30599847/2sB3QNpTgp
 
 Link to Postman collection:
 https://www.postman.com/maintenance-explorer-22011916/vaudoise/collection/euf28ot/rest-api-vaudoise?action=share&source=copy-link&creator=30599847

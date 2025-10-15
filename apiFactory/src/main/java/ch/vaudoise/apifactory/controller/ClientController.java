@@ -1,18 +1,14 @@
 package ch.vaudoise.apifactory.controller;
 
 import ch.vaudoise.apifactory.dto.*;
+import ch.vaudoise.apifactory.dto.ApiJsonResponse.ApiSuccessResponse;
 import ch.vaudoise.apifactory.exceptions.ClientNotFoundException;
 import ch.vaudoise.apifactory.services.ClientServices;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 @Slf4j
@@ -28,21 +24,17 @@ public class ClientController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addClient(@Valid @RequestBody ClientCreateRequest client){
+    public ResponseEntity<ApiSuccessResponse> addClient(@Valid @RequestBody ClientCreateRequest client){
         log.info("Add Client {}", client.name());
-        try {
-            clientServices.createClient(client);
+        clientServices.createClient(client);
+        ApiSuccessResponse responseBody = new ApiSuccessResponse(
+                HttpStatus.CREATED.value(),
+                "Client successfully added: " + client.name()
+        );
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body("Client successfully added: " + client.name());
-        }catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Invalid input: " + e.getMessage());}
-        catch (Exception e) {
-            log.error("Unexpected error while adding client", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An unexpected error occurred. Please try again later.");
-        }
+                    .body(responseBody);
+
    }
 
    @GetMapping("/id/{id}")
@@ -56,19 +48,14 @@ public class ClientController {
     }
 
     @PutMapping("/update/{email}")
-    public ResponseEntity<String>  modifyClient(@PathVariable String email,@RequestBody ClientModifyRequest client) {
+    public ResponseEntity<ApiSuccessResponse>  modifyClient(@PathVariable String email,@RequestBody ClientModifyRequest client) {
         log.info("Update Client {}", email);
-        try {
-            clientServices.updateClient(email, client);
-            return ResponseEntity.ok("Client updated successfully.");
-        } catch (ClientNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
-        }catch (Exception e) {
-            log.error("Unexpected error while updating client", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An unexpected error occurred. Please try again later.");
-        }
+        clientServices.updateClient(email, client);
+        ApiSuccessResponse responseBody = new ApiSuccessResponse(
+                HttpStatus.OK.value(),
+                "Client successfully updated: " + email
+        );
+        return ResponseEntity.ok().body(responseBody);
     }
 
 
@@ -77,18 +64,15 @@ public class ClientController {
      * @return A ResponseEntity with a success message or an error message
      */
     @DeleteMapping("/delete/{email}")
-    public ResponseEntity<String> deleteClient(@PathVariable String email) {
-        try {
-            clientServices.deleteClientByEmail(email);
-            return ResponseEntity.ok("Client deleted successfully.");
-        } catch (ClientNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
-        } catch (Exception e) {
-            log.error("Unexpected error while deleting client", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An unexpected error occurred. Please try again later.");
-        }
+    public ResponseEntity<ApiSuccessResponse> deleteClient(@PathVariable String email) {
+        log.info("Delete Client {}", email);
+        clientServices.deleteClientByEmail(email);
+        ApiSuccessResponse responseBody = new ApiSuccessResponse(
+                HttpStatus.OK.value(),
+                "Client successfully deleted: " + email
+        );
+        return ResponseEntity.ok().body(responseBody);
+
     }
 
 
@@ -103,21 +87,21 @@ public class ClientController {
 
 
 
-    /**
-     * Source : https://stackoverflow.com/questions/66371164/spring-boot-exceptionhandler-for-methodargumentnotvalidexception-in-restcontroll
-     */
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String,String> handleValidationException(MethodArgumentNotValidException ex){
-        Map<String,String> errors = new HashMap<>();
-
-        ex.getBindingResult().getAllErrors().forEach((error)->{
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName,errorMessage);
-        });
-        return errors;
-    }
+//    /**
+//     * Source : https://stackoverflow.com/questions/66371164/spring-boot-exceptionhandler-for-methodargumentnotvalidexception-in-restcontroll
+//     */
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public Map<String,String> handleValidationException(MethodArgumentNotValidException ex){
+//        Map<String,String> errors = new HashMap<>();
+//
+//        ex.getBindingResult().getAllErrors().forEach((error)->{
+//            String fieldName = ((FieldError) error).getField();
+//            String errorMessage = error.getDefaultMessage();
+//            errors.put(fieldName,errorMessage);
+//        });
+//        return errors;
+//    }
 
 
 

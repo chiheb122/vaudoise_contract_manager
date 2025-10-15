@@ -32,11 +32,26 @@ public class ClientServices {
     @Transactional
     public Client createClient(ClientCreateRequest req) {
         Client instance = ClientFactory.instantiate(req);
-        // Check if a client with the same email already exists )
+        // Check if a client with the same unique email already exists
         clientRepository.findByEmailIgnoreCase(req.email())
                     .ifPresent(c -> {
                         throw new IllegalArgumentException("A client with email " + req.email() + " already exists.");
                     });
+        // check if the client is a company and if the companyIdentifier is unique
+        if (instance instanceof Company company) {
+            clientRepository.findByCompanyIdentifierIgnoreCase(company.getCompanyIdentifier())
+                    .ifPresent(c -> {
+                        throw new IllegalArgumentException("A company with identifier " + company.getCompanyIdentifier() + " already exists.");
+                    });
+        }
+
+        // check if the phone number is unique
+        if (req.phone() != null && !req.phone().isEmpty()) {
+            clientRepository.findByPhoneIgnoreCase(req.phone())
+                    .ifPresent(c -> {
+                        throw new IllegalArgumentException("A client with phone number " + req.phone() + " already exists.");
+                    });
+        }
         // Save the new client to the repository
         return clientRepository.save(instance);
     }

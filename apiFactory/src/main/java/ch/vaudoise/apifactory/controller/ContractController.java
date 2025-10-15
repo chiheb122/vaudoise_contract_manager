@@ -2,7 +2,7 @@ package ch.vaudoise.apifactory.controller;
 
 import ch.vaudoise.apifactory.dto.ContractRequest;
 import ch.vaudoise.apifactory.dto.ContractSumResponse;
-import ch.vaudoise.apifactory.exceptions.ClientNotFoundException;
+import ch.vaudoise.apifactory.dto.ApiJsonResponse.ApiSuccessResponse;
 import ch.vaudoise.apifactory.services.ContractServices;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,23 +32,16 @@ public class ContractController {
      * @return ResponseEntity with appropriate status and message
      */
     @PostMapping("/client/add")
-    public ResponseEntity<String> addContractToClient(@RequestParam String email, @RequestBody ContractRequest contract){
-        try {
+    public ResponseEntity<ApiSuccessResponse> addContractToClient(@RequestParam String email, @RequestBody ContractRequest contract){
+        log.info("Add Contract to Client {}", email);
             contractService.addContractToClient(email, contract);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body("Contract successfully added to client with email: " + email);
-        } catch (ClientNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Invalid input: " + e.getMessage());
-        } catch (Exception e) {
-            log.error("Unexpected error while adding contract to client", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An unexpected error occurred. Please try again later.");
-        }
+        ApiSuccessResponse responseBody = new ApiSuccessResponse(
+                HttpStatus.CREATED.value(),
+                "Contract successfully added to client with email: " + email
 
+        );
+        // Return json response Created status 201
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
     }
 
 
@@ -64,29 +57,15 @@ public class ContractController {
             @RequestParam String email,
             @RequestParam(required = false)
             @DateTimeFormat(pattern = "yyyy-MM-dd") Date updatedAfter) {
-        try {
+
             List<ContractRequest> contracts = contractService.getAllContractsOfClientByEmail(email, updatedAfter);
             return ResponseEntity.ok(contracts);
-        }catch (ClientNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } catch (Exception e) {
-            log.error("Unexpected error while retrieving contracts for client with email: " + email, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-
     }
 
     @GetMapping("/client/sum")
     public ResponseEntity<ContractSumResponse> getSumOfContracts(@RequestParam String email)
     {
-        try {
             return ResponseEntity.ok(contractService.getTotalCostOfActiveContracts(email));
-        }catch (ClientNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } catch (Exception e) {
-            log.error("Unexpected error while calculating sum of contracts for client with email: " + email, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
     }
 
 }
