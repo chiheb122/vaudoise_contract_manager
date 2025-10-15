@@ -46,3 +46,17 @@ As a customer advisor, I want to create,
 
 Link to Postman collection:
 https://www.postman.com/maintenance-explorer-22011916/vaudoise/collection/euf28ot/rest-api-vaudoise?action=share&source=copy-link&creator=30599847
+---
+
+### Architecture Explanation
+The project is structured into several packages, each serving a specific purpose:
+- `controller`: Contains REST controllers that handle HTTP requests and responses.
+- `service`: Contains service classes that encapsulate business logic to manage clients and contracts.
+- `repository`: Contains repository interfaces for client entities to manage more efficiently the subtypes of Client (Person and Company) 
+and personalize some necessary queries.
+- `entities`: Contains entity classes representing the data model and their relationships.
+- `dto`: Contains Data Transfer Objects (DTOs) for transferring data between without exposing the entity classes directly for security reasons
+and to have more control over the data being sent and received.
+- `exception`: Contains custom exception classes and a global exception handler to manage errors gracefully.
+- `factory`: Contains factory classes to create instances of client entities based on specific types (Person or Company) , 
+this can be useful when you want to create clients dynamically based on user input or other conditions and for the future extension of the project.
