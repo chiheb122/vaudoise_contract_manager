@@ -59,7 +59,7 @@ public class ClientServices {
 
     /**
      * Map a Client entity to the appropriate ClientResponse subclass based on its type.
-     * @param clientEntity
+     * @param clientEntity The client entity to map
      * @return ClientResponse
      */
     private ClientResponse mapClient(Client clientEntity){

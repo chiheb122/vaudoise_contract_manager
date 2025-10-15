@@ -24,6 +24,7 @@ public class ClientFactory {
                 person.setEmail(client.email());
                 person.setPhone(client.phone());
                 person.setBirthdate(client.birthdate());
+                person.setTypeClient(client.typeClient());
                 return person;
             }
 
@@ -33,6 +34,7 @@ public class ClientFactory {
                 company.setEmail(client.email());
                 company.setPhone(client.phone());
                 company.setCompanyIdentifier(client.companyIdentifier());
+                company.setTypeClient(client.typeClient());
                 return company;
             }
             default -> throw new IllegalArgumentException("Unknown client type: " + client.typeClient());

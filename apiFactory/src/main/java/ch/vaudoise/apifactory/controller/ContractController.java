@@ -3,14 +3,13 @@ package ch.vaudoise.apifactory.controller;
 import ch.vaudoise.apifactory.dto.ContractRequest;
 import ch.vaudoise.apifactory.dto.ContractSumResponse;
 import ch.vaudoise.apifactory.exceptions.ClientNotFoundException;
-import ch.vaudoise.apifactory.services.ContractService;
+import ch.vaudoise.apifactory.services.ContractServices;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -19,9 +18,9 @@ import java.util.List;
 @RequestMapping("/api/v1/contracts")
 public class ContractController {
 
-    public final ContractService contractService;
+    public final ContractServices contractService;
 
-    public ContractController(ContractService contractService) {
+    public ContractController(ContractServices contractService) {
         this.contractService = contractService;
     }
 

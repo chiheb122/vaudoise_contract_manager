@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class ContractService {
+public class ContractServices {
 
     @PersistenceContext
     EntityManager entityManager;
@@ -26,7 +26,7 @@ public class ContractService {
 
     private final ClientRepository clientRepository;
 
-    public ContractService(ClientRepository clientRepository) {
+    public ContractServices(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
     }
 

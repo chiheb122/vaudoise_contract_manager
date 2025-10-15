@@ -74,6 +74,9 @@ public abstract class Client {
     public TypeClient getTypeClient() {
         return typeClient;
     }
+    public void setTypeClient(TypeClient typeClient) {
+        this.typeClient = typeClient;
+    }
 
     public List<Contract> getListOfContracts() {
         return this.ListOfContracts;

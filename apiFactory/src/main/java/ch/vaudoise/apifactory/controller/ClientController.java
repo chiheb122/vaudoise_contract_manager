@@ -53,7 +53,6 @@ public class ClientController {
     @GetMapping
     public ClientResponse getClientByEmail(@RequestParam("email") String email) throws ClientNotFoundException {
             return clientServices.getClientByEmail(email);
-
     }
 
     @PutMapping("/update/{email}")
