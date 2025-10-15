@@ -50,6 +50,11 @@ https://www.postman.com/maintenance-explorer-22011916/vaudoise/collection/euf28o
 
 ### Architecture Explanation
 The project is structured into several packages, each serving a specific purpose:
+
+Entities: Client (abstract because it has two subtypes and cannot be instantiated directly), Person, and Company follow SINGLE_TABLE inheritance.
+Each Client has many Contract entities (@OneToMany).
+
+The main packages are:
 - `controller`: Contains REST controllers that handle HTTP requests and responses.
 - `service`: Contains service classes that encapsulate business logic to manage clients and contracts.
 - `repository`: Contains repository interfaces for client entities to manage more efficiently the subtypes of Client (Person and Company) 
