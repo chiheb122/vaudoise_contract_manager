@@ -1,3 +1,6 @@
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.6-brightgreen?logo=springboot&logoColor=white)
+![Java](https://img.shields.io/badge/Java-21-orange?logo=openjdk&logoColor=white)
+[![Build](https://github.com/chiheb122/vaudoise_contract_manager/actions/workflows/ci.yml/badge.svg)](https://github.com/chiheb122/vaudoise_contract_manager/actions/workflows/ci.yml)
 # vaudoise_contract_manager
 Technical exercise – Spring Boot API managing clients and contracts
 
@@ -14,7 +17,7 @@ As a customer advisor, I want to create,
 ---
 
 ### Technologies
-- Java 25
+- Java 21
 - Maven 3.9.11
 - Spring Boot 
 - Spring Data JPA (Hibernate)
@@ -65,3 +68,15 @@ and to have more control over the data being sent and received.
 - `exception`: Contains custom exception classes and a global exception handler to manage errors gracefully.
 - `factory`: Contains factory classes to create instances of client entities based on specific types (Person or Company) , 
 this can be useful when you want to create clients dynamically based on user input or other conditions and for the future extension of the project.
+
+### Testing
+The project includes unit tests for service classes.
+<center>
+
+![tests](docs/tests.png)
+
+</center>
+Tests are located in the `src/test/java` directory and can be run using Maven:
+```bash
+  mvn test
+```
