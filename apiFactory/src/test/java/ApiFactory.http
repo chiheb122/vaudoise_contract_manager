@@ -1,0 +1,63 @@
+@site=http://localhost:8081/api/v1
+
+
+POST {{site}}/clients/add
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "chiheb",
+  "email": "test3@example.com",
+  "phone": "+41782034526",
+  "typeClient": "COMPANY",
+  "companyIdentifier": "aaa-123"
+}
+
+###
+POST {{site}}/clients/add
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "chiheb",
+  "email": "test@example.com",
+  "phone": "+41782034536",
+  "typeClient": "PERSON",
+  "birthdate": "1998-08-26"
+}
+###
+GET {{site}}/clients/id/1
+Accept: application/json
+Content-Type: application/json
+
+
+###
+GET {{site}}clients?email=test@example.com
+Accept: application/json
+Content-Type: application/json
+
+###
+POST {{site}}/contracts/client/add?email=test@example.com
+Accept: application/json
+Content-Type: application/json
+
+{
+  "costAmount": 5300.4,
+  "endDate" :"2025-12-11"
+}
+###
+GET {{site}}/contracts/client/sum?email=test@example.com
+Accept: application/json
+Content-Type: application/json
+
+###
+GET {{site}}/contracts/client?email=test@example.com&updatedAfter=2025-10-01
+Accept: application/json
+Content-Type: application/json
+
+###
+DELETE {{site}}/clients/delete/test@example.com
+Accept: application/json
+Content-Type: application/json
+
+
